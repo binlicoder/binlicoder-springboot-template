@@ -1,0 +1,75 @@
+spring:
+  jackson:
+    default-property-inclusion: non_null
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:30}
+      minimum-idle: ${DB_POOL_MIN_IDLE:10}
+      connection-timeout: 30000
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+      timeout: 3s
+
+server:
+  shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.binlicoder.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    jdbc-type-for-null: null
+  global-config:
+    banner: false
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: true
+      logic-not-delete-value: false
+
+app:
+  security:
+    issuer: ${JWT_ISSUER}
+    jwt-secret: ${JWT_SECRET}
+    access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:2h}
+    api-key: ${EXTERNAL_API_KEY}
+  cache:
+    maximum-size: ${CACHE_MAXIMUM_SIZE:10000}
+    ttl: ${CACHE_TTL:30m}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+logging:
+  config: classpath:logback-spring.xml
+  file:
+    path: ${LOG_PATH:/var/log/binlicoder}
+  logback:
+    rollingpolicy:
+      max-file-size: ${LOG_MAX_FILE_SIZE:100MB}
+      max-history: ${LOG_MAX_HISTORY:30}
+      total-size-cap: ${LOG_TOTAL_SIZE_CAP:10GB}
+  level:
+    root: WARN
+    com.binlicoder: INFO
